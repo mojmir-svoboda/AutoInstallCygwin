@@ -1,37 +1,48 @@
-@ECHO OFF
-REM -- Automates cygwin installation
+@echo ON
+rem -- Automates cygwin installation
 
-SETLOCAL
+setlocal
 
-REM -- Change to the directory of the executing batch file
+rem -- Change to the directory of the executing batch file
 CD %~dp0
 
-REM -- Configure our paths
-SET SITE=http://cygwin.mirrors.pair.com/
-SET LOCALDIR=%CD%
-SET ROOTDIR=C:/cygwin
+set PROGNAME=setup-x86_64.exe
 
-REM -- These are the packages we will install (in addition to the default packages)
-SET PACKAGES=mintty,wget,ctags,diffutils,git,git-completion,git-svn,stgit,mercurial
-SET PACKAGES=%PACKAGES%,gcc4,make,automake,autoconf,readline,libncursesw-devel,libiconv
-SET PACKAGES=%PACKAGES%,lua,python,ruby
+echo [INFO]: Downloading cygwin %PROGNAME%
+Cscript.exe getFile.vbs "https://cygwin.com/%PROGNAME%" %PROGNAME%
+if exist %PROGNAME% (
+	echo [INFO]: Cygwin setup was downloaded
+) else (
+	echo [FATAL]: Cygwin setup was not downloaded
+	goto end
+)
 
-REM -- Do it!
-ECHO *** INSTALLING DEFAULT PACKAGES
-setup -q -d -D -L -X -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%"
-ECHO.
-ECHO.
-ECHO *** INSTALLING CUSTOM PACKAGES
-setup -q -d -D -L -X -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%" -P %PACKAGES%
+rem -- Configure our paths
+set SITE=ftp://mirror.switch.ch/mirror/cygwin/
+set LOCALDIR=%CD%\tmp
+set ROOTDIR=C:/cygwin
+set OPTIONS=-q --no-desktop --download --local-install --no-verify
 
-REM -- Show what we did
-ECHO.
-ECHO.
-ECHO cygwin installation updated
-ECHO  - %PACKAGES%
-ECHO.
+rem -- Do it!
+echo [INFO]: Cygwin setup installing base packages
+%PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%"
 
-ENDLOCAL
+pause
 
-PAUSE
-EXIT /B 0
+rem -- These are the packages we will install (in addition to the default packages)
+set PACKAGES=mintty,wget,ctags,diffutils
+set PACKAGES=%PACKAGES%,gcc4,make,automake,autoconf,readline,libncursesw-devel,libiconv
+set PACKAGES=%PACKAGES%,colorgcc,colordiff,bvi,gawk
+rem SET PACKAGES=%PACKAGES%,lua,perl,python,ruby
+set PACKAGES=%PACKAGES%,bc,gnuplot
+set PACKAGES=%PACKAGES%,inetutils,ncurses,openssh,openssl,vim,mc,multitail
+
+echo [INFO]: Cygwin setup installing custom packages:
+echo %PACKAGES%
+%PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%" -P %PACKAGES%
+
+endlocal
+
+pause
+exit /B 0
+
