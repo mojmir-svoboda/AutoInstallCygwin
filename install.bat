@@ -29,6 +29,8 @@ echo [INFO]: Cygwin setup installing base packages
 
 pause
 
+echo [INFO]: For more packages go to http://grasswiki.osgeo.org/wiki/Cygwin_Packages
+
 rem -- These are the packages we will install (in addition to the default packages)
 set PACKAGES=mintty,wget,ctags,diffutils
 set PACKAGES=%PACKAGES%,gcc4,make,automake,autoconf,readline,libncursesw-devel,libiconv
@@ -41,8 +43,8 @@ echo [INFO]: Cygwin setup installing custom packages:
 echo %PACKAGES%
 %PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%" -P %PACKAGES%
 
-endlocal
-
 pause
+
+endlocal
 exit /B 0
 
