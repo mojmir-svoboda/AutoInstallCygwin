@@ -17,33 +17,49 @@ if exist %PROGNAME% (
 	goto end
 )
 
-rem -- Configure our paths
 set SITE=ftp://mirror.switch.ch/mirror/cygwin/
 set LOCALDIR=%CD%\tmp
 set ROOTDIR=C:/cygwin
 set OPTIONS=-q --no-desktop --download --local-install --no-verify
 
-rem -- Do it!
-echo [INFO]: Cygwin setup installing base packages
-%PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%"
+if "%1" == "" goto FRESH_INSTALL
 
-pause
+	echo [INFO]: Cygwin setup post-install package(s):
+	echo [INFO]: For more packages go to http://grasswiki.osgeo.org/wiki/Cygwin_Packages
+	set PACKAGES=%1
+	echo %PACKAGES%
+	%PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%" -P %PACKAGES%
 
-echo [INFO]: For more packages go to http://grasswiki.osgeo.org/wiki/Cygwin_Packages
+	goto DONE
 
-rem -- These are the packages we will install (in addition to the default packages)
-set PACKAGES=mintty,wget,ctags,diffutils
-set PACKAGES=%PACKAGES%,gcc4,make,automake,autoconf,readline,libncursesw-devel,libiconv
-set PACKAGES=%PACKAGES%,colorgcc,colordiff,bvi,gawk
-rem SET PACKAGES=%PACKAGES%,lua,perl,python,ruby
-set PACKAGES=%PACKAGES%,bc,gnuplot
-set PACKAGES=%PACKAGES%,inetutils,ncurses,openssh,openssl,vim,mc,multitail
+:FRESH_INSTALL
 
-echo [INFO]: Cygwin setup installing custom packages:
-echo %PACKAGES%
-%PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%" -P %PACKAGES%
+	if exist %ROOTDIR% (
+		echo [FATAL]: Cygwin root dir already exists!
+		goto ERROR
+	)
 
-pause
+		pause
+
+	echo [INFO]: Cygwin setup installing base packages
+	%PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%"
+
+	echo [INFO]: For more packages go to http://grasswiki.osgeo.org/wiki/Cygwin_Packages
+
+	rem -- These are the packages we will install (in addition to the default packages)
+	set PACKAGES=mintty,wget,ctags,diffutils
+	set PACKAGES=%PACKAGES%,gcc4,make,automake,autoconf,readline,libncursesw-devel,libiconv
+	set PACKAGES=%PACKAGES%,colorgcc,colordiff,bvi,gawk
+	set PACKAGES=%PACKAGES%,bc,gnuplot
+	set PACKAGES=%PACKAGES%,inetutils,ncurses,openssh,openssl,vim,mc,multitail,dos2unix,irssi
+
+	echo [INFO]: Cygwin setup installing custom packages:
+	echo %PACKAGES%
+	%PROGNAME% %OPTIONS% -s %SITE% -l "%LOCALDIR%" -R "%ROOTDIR%" -P %PACKAGES%
+
+:ERROR
+	echo [INFO]: cannot continue
+:DONE
 
 endlocal
 exit /B 0
