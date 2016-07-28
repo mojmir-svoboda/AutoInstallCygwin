@@ -52,6 +52,7 @@ if "%1" == "" goto FRESH_INSTALL
 	set PACKAGES=%PACKAGES%,colorgcc,colordiff,bvi,gawk
 	set PACKAGES=%PACKAGES%,bc,gnuplot
 	set PACKAGES=%PACKAGES%,inetutils,ncurses,openssh,openssl,vim,mc,multitail,dos2unix,irssi
+	set PACKAGES=%PACKAGES%,screen
 
 	echo [INFO]: Cygwin setup installing custom packages:
 	echo %PACKAGES%
